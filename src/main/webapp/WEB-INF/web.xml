@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- web.xml - tells tomcat how to route requests to jersey
+     tutorial used jersey.config.server.provider.packages param to point at the package
+     i tried that first but then switched to using Application class with getClasses() instead
+    so jersey knows exactly what to register rather than scanning the whole package -->
+
+<!-- changed to /api/v1/* so jersey only sees /rooms etc -->
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+
+    <display-name>Smart Campus Sensor API</display-name>
+
+    <servlet>
+        <servlet-name>SmartCampusServlet</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <!-- pointing at Application class, not a package - cleaner than package scanning -->
+            <param-name>jakarta.ws.rs.Application</param-name>
+            <param-value>com.smartcampus.ApiApplication</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SmartCampusServlet</servlet-name>
+        <url-pattern>/api/v1/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- also map the exact path so GET /api/v1 hits the discovery endpoint without needing the trailing slash -->
+    <servlet-mapping>
+        <servlet-name>SmartCampusServlet</servlet-name>
+        <url-pattern>/api/v1</url-pattern>
+    </servlet-mapping>
+
+</web-app>
